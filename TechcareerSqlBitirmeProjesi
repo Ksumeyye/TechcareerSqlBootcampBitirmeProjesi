@@ -1,4 +1,4 @@
-#Techcareer.Net Database Managemnt With SQL Bootcamp Bitirme Projem <br>
-1-) Northwind veritabanında toplam kaç tablo vardır? Bu tabloların isimlerini listeleyiniz. <br>
-SELECT COUNT(*) AS TableCount FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'; <br>
-![Image](https://github.com/user-attachments/assets/92911743-cb55-4807-ab68-b69fbde2af3b)
+#Techcareer.Net Database Managemnt With SQL Bootcamp Bitirme Projem
+1-) Northwind veritabanında toplam kaç tablo vardır? Bu tabloların isimlerini listeleyiniz. 
+SELECT COUNT(*) AS TableCount FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'; 
+
