@@ -72,3 +72,66 @@ FROM Products;
 9-)Nested Subquery:  
 En çok sipariş verilen ürünün adını ve sipariş adedini (adet bazında) bulun.
 Çözüm:
+SELECT TOP 1 pro.ProductName, SUM(ord.Quantity) AS ToplamSiparişAdedi
+FROM Products pro
+JOIN [Order Details] ord ON pro.ProductID = ord.ProductID
+GROUP BY pro.ProductName
+ORDER BY ToplamSiparişAdedi DESC;
+
+10-) View Oluşturma:  
+Ürünler ve kategoriler bilgilerini birleştiren bir görünüm (view) oluşturun.
+Çözüm:
+CREATE VIEW UrunlerKategoriler
+AS
+SELECT pro.ProductID, pro.ProductName, pro.UnitPrice,
+cat.CategoryID, cat.CategoryName
+FROM Products pro
+JOIN Categories cat ON pro.CategoryID = cat.CategoryID;
+SELECT * FROM UrunlerKategoriler;
+
+11-)  Trigger:  
+Ürün silindiğinde log tablosuna kayıt yapan bir trigger yazınız.
+Çözüm:
+//Silinen bilgilerin var olduğu log tablosu
+CREATE TABLE UrunSilmeLog (LogID INT IDENTITY(1,1) PRIMARY KEY, ProductID INT,
+ProductName NVARCHAR(40), UnitPrice MONEY,
+SilmeTarihi DATETIME DEFAULT GETDATE());
+
+//Kayıt edecek trıgger;
+CREATE TRIGGER UrunSilmeLogTrigger ON Products
+AFTER DELETE AS
+BEGIN
+INSERT INTO UrunSilmeLog (ProductID, ProductName, UnitPrice)
+SELECT ProductID, ProductName, UnitPrice
+FROM deleted;
+END;
+//Kısaca Kontrol Edersem;
+INSERT INTO Products (ProductName) VALUES ('Test');         
+DELETE FROM Products WHERE ProductName = 'Test';                        
+SELECT * FROM UrunSilmeLog;   
+
+12-) Stored Procedure:  
+Belirli bir ülkeye ait müşterileri listeleyen bir stored procedure yazınız.
+Çözüm:
+CREATE PROCEDURE BelirliUlkeyeAitMusteriler
+@Ulke NVARCHAR(50)
+AS
+BEGIN SELECT CustomerID, CompanyName, ContactName, City
+FROM Customers
+WHERE Country = @Ulke;
+END;
+EXEC MusterileriUlkeyeGoreListele @Ulke = 'Brazil';
+
+13-)  Left Join Kullanımı:  
+Tüm ürünlerin tedarikçileriyle (suppliers) birlikte listesini yapın. Tedarikçisi olmayan ürünler de listelensin.
+Çözüm:
+SELECT pro.ProductID, pro.ProductName, sup.SupplierID, sup.CompanyName AS TedarikçiŞirketi
+FROM Products pro
+LEFT JOIN Suppliers sup ON pro.SupplierID = sup.SupplierID;
+
+14-) Fiyat Ortalamasının Üzerindeki Ürünler:  
+Fiyatı ortalama fiyatın üzerinde olan ürünleri listeleyin.
+Çözüm:
+SELECT ProductName AS 'Ürünİsmi', UnitPrice AS 'BirimFiyat'
+FROM Products 
+WHERE UnitPrice > (SELECT AVG(UnitPrice) FROM Products);
