@@ -1,4 +1,74 @@
 #Techcareer.Net Database Managemnt With SQL Bootcamp Bitirme Projem
 1-) Northwind veritabanında toplam kaç tablo vardır? Bu tabloların isimlerini listeleyiniz. 
-SELECT COUNT(*) AS TableCount FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE = 'BASE TABLE'; 
+Çözüm: 
+SELECT COUNT(*) AS TableCount 
+FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_TYPE = 'BASE TABLE'; 
 
+ SELECT TABLE_NAME 
+FROM INFORMATION_SCHEMA.TABLES 
+WHERE TABLE_TYPE = 'BASE TABLE';
+
+2-)JOIN: Her sipariş (Orders) için, Şirket adı (CompanyName), çalışan adı (Employee Full Name), sipariş tarihi ve 
+gönderici şirketin adı (Shipper) ile birlikte bir liste çıkarın.
+Çözüm: 
+SELECT
+ord.OrderID,
+cus.CompanyName AS ŞirketAdı,
+emp.FirstName + ' ' + emp.LastName AS ÇalışanAdı,
+ord.OrderDate AS SiparişTarihi,
+shi.CompanyName AS GöndericiŞirketAdı
+FROM Orders ord
+JOIN Customers cus ON ord.CustomerID = cus.CustomerID
+JOIN Employees emp ON ord.EmployeeID = emp.EmployeeID
+JOIN Shippers shi ON ord.ShipVia = shi.ShipperID;
+
+3-) Aggregate Fonksiyon:  
+Tüm siparişlerin toplam tutarını bulun. (Order Details tablosundaki Quantity  UnitPrice üzerinden 
+hesaplayınız)
+Çözüm:
+SELECT SUM(Quantity * UnitPrice) AS "Tüm Siparişlerin Toplam Tutarı" 
+FROM [Order Details];
+
+4-) Gruplama:  
+Hangi ülkeden kaç müşteri vardır?
+Çözüm:
+SELECT Country, COUNT(*) AS MüşteriSayısı
+FROM Customers
+GROUP BY Country;
+
+5-) Subquery Kullanımı:  
+En pahalı ürünün adını ve fiyatını listeleyiniz.
+Çözüm:
+SELECT ProductName, UnitPrice
+FROM Products
+WHERE UnitPrice = (SELECT MAX(UnitPrice) FROM Products);
+
+6-) JOIN ve Aggregate:  
+Çalışan başına düşen sipariş sayısını gösteren bir liste çıkarınız.
+Çözüm:
+SELECT emp.FirstName + ' ' + emp.LastName AS "ÇalışanAdıSoyadı", 
+COUNT(ord.OrderID) AS "SiparişSayısı"
+FROM Employees emp
+LEFT JOIN Orders ord ON emp.EmployeeID = ord.EmployeeID
+GROUP BY emp.FirstName, emp.LastName;
+
+7-) Tarih Filtreleme:  
+1997 yılında verilen siparişleri listeleyin.
+Çözüm:
+SELECT * FROM Orders WHERE YEAR(OrderDate) = 1997;
+
+8-)  CASE Kullanımı:  
+Ürünleri fiyat aralıklarına göre kategorilere ayırarak listeleyin: 020 → Ucuz, 2050 → Orta, 50+ → Pahalı.
+Çözüm:
+SELECT ProductName as "Ürün İsmi", UnitPrice as "Birim Fiyat", 
+       CASE 
+           WHEN UnitPrice < 20 THEN 'Ucuz'
+           WHEN UnitPrice BETWEEN 20 AND 50 THEN 'Orta'
+           ELSE 'Pahalı'
+       END AS "FiyatAralığı"
+FROM Products;
+
+9-)Nested Subquery:  
+En çok sipariş verilen ürünün adını ve sipariş adedini (adet bazında) bulun.
+Çözüm:
