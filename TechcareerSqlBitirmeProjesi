@@ -135,3 +135,80 @@ Fiyatı ortalama fiyatın üzerinde olan ürünleri listeleyin.
 SELECT ProductName AS 'Ürünİsmi', UnitPrice AS 'BirimFiyat'
 FROM Products 
 WHERE UnitPrice > (SELECT AVG(UnitPrice) FROM Products);
+
+15-)  En Çok Ürün Satan Çalışan:  
+Sipariş detaylarına göre en çok ürün satan çalışan kimdir?
+Çözüm:
+SELECT TOP 1 emp.EmployeeID, emp.FirstName + ' ' + emp.LastName AS 'ÇalışanAdıSoyadı', SUM(orddet.Quantity) AS ToplamSatış
+FROM Employees emp
+JOIN Orders ord ON emp.EmployeeID = ord.EmployeeID
+JOIN [Order Details] orddet ON ord.OrderID = orddet.OrderID
+GROUP BY emp.EmployeeID, emp.FirstName, emp.LastName
+ORDER BY ToplamSatış DESC;  
+
+16-)  Ürün Stoğu Kontrolü:  
+Stok miktarı 10’un altında olan ürünleri listeleyiniz.
+Çözüm:
+SELECT ProductName AS 'Ürünİsmi', UnitsInStock AS 'BirimStok'
+FROM Products 
+WHERE UnitsInStock < 10
+ORDER BY UnitsInStock DESC;
+
+17-) Şirketlere Göre Sipariş Sayısı:  
+Her müşteri şirketinin yaptığı sipariş sayısını ve toplam harcamasını bulun.
+Çözüm:
+SELECT cus.CompanyName, COUNT(ord.OrderID) AS SiparişSayısı, 
+SUM(orddet.Quantity * orddet.UnitPrice) AS ToplamHarcama
+FROM Customers cus
+JOIN Orders ord ON cus.CustomerID = ord.CustomerID
+JOIN [Order Details] orddet ON ord.OrderID = ord.OrderID
+GROUP BY cus.CompanyName;
+
+18-) En Fazla Müşterisi Olan Ülke:  
+Hangi ülkede en fazla müşteri var?
+Çözüm:
+SELECT TOP 1 Country FROM Customers 
+GROUP BY Country
+ORDER BY COUNT(*) DESC;
+
+19-) Her Siparişteki Ürün Sayısı:  
+Siparişlerde kaç farklı ürün olduğu bilgisini listeleyin.
+Çözüm:
+SELECT OrderID, COUNT(ProductID) AS FarklıÜrünSayısı FROM [Order Details]
+GROUP BY OrderID;
+
+20-) Ürün Kategorilerine Göre Ortalama Fiyat:  
+Her kategoriye göre ortalama ürün fiyatını bulun.
+Çözüm:
+SELECT cat.CategoryName, AVG(pro.UnitPrice) AS OrtalamaFiyat
+FROM Products pro
+JOIN Categories cat ON pro.CategoryID = cat.CategoryID
+GROUP BY cat.CategoryName;
+
+21-) Aylık Sipariş Sayısı:  
+Siparişleri ay ay gruplayarak kaç sipariş olduğunu listeleyin.
+Çözüm:
+SELECT DATEPART(month, OrderDate) AS Ay, COUNT(*) AS SiparisSayisi
+FROM Orders
+GROUP BY DATEPART(month, OrderDate);
+
+22-) Çalışanların Müşteri Sayısı:  
+Her çalışanın ilgilendiği müşteri sayısını listeleyin.
+Çözüm:
+SELECT EmployeeID, COUNT(DISTINCT CustomerID) AS FarklıMüşteriSayısı
+FROM Orders
+GROUP BY EmployeeID;
+
+23-) Hiç siparişi olmayan müşterileri listeleyin.
+Çözüm:
+SELECT cus.CustomerID, cus.CompanyName AS 'ŞirketAdı'
+FROM Customers cus
+FULL JOIN Orders ord ON cus.CustomerID = ord.CustomerID
+WHERE ord.OrderID IS NULL;
+
+24-) Siparişlerin Nakliye (Freight) Maliyeti Analizi:  
+Nakliye maliyetine göre en pahalı 5 siparişi listeleyin.
+Çözüm:
+SELECT TOP 5 CustomerID , OrderID, Freight AS 'NakliyeMaliyeti'
+FROM Orders 
+ORDER BY 'NakliyeMaliyeti' DESC;
