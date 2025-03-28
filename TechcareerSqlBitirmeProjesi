@@ -1,4 +1,4 @@
-#Techcareer.Net Database Managemnt With SQL Bootcamp Bitirme Projem
+#Techcareer.Net Database Management With SQL Bootcamp Bitirme Projem
 1-) Northwind veritabanında toplam kaç tablo vardır? Bu tabloların isimlerini listeleyiniz. 
 Çözüm: 
 SELECT COUNT(*) AS TableCount 
